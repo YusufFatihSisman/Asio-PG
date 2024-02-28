@@ -14,6 +14,8 @@
 
 enum MessageType : uint32_t{
     Read,
+    All,
+    Other,
 };
 
 class client : public client_interface<MessageType>{
@@ -27,9 +29,6 @@ class client : public client_interface<MessageType>{
             ms >> a >> c >>b;
 
             std::cout << a << " " << c << " " << b << "\n";
-            //SendAll(msg);
-            //std::cout << msg.body.data() << "\n";
-            //std::cout << "MESSAGE HANDLED\n";
         }
 };
 
@@ -38,7 +37,6 @@ int main(){
     client cl;
 
     Message<MessageType> ms;
-
     int a = 12;
     int b = 25;
     char c[5] = "name";
@@ -48,10 +46,16 @@ int main(){
 
     cl.Connect("127.0.0.1", 10000);
 
-    
+    ms.head.id = MessageType::Other;
+
+    char input;
     while(1){
-        cl.Send(ms);
-        std::cin.get();
+
+        //std::cin.get();
+        std::cin >> input;
+        if(input == 'a'){
+            cl.Send(ms);
+        }
         cl.Update();
     }
 

@@ -15,6 +15,8 @@
 
 enum MessageType : uint32_t{
     Read,
+    All,
+    Other,
 };
 
 class server : public server_interface<MessageType>{
@@ -24,8 +26,14 @@ class server : public server_interface<MessageType>{
     protected:
         void HandleMessage(std::shared_ptr<connection<MessageType>> client, const Message<MessageType>& msg){
 
-            Send(client, msg);
-            //std::cout << msg.body.data() << "\n";
+            if(msg.head.id == MessageType::All){
+                SendAll(msg);
+            }
+            else if(msg.head.id == MessageType::Other){
+                SendAll(msg, client);
+            }else{
+                Send(client, msg);
+            }
             std::cout << "MESSAGE HANDLED\n";
         }
 };
@@ -37,7 +45,7 @@ int main(){
     sv.start();
 
     while(1){
-        sv.update();
+        sv.Update();
     }
 
     return 0;

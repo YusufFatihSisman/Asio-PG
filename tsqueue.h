@@ -16,10 +16,6 @@ class tsqueue{
     public:
         tsqueue() = default;
 		tsqueue(const tsqueue<T>&) = delete;
-        /*virtual ~tsqueue() { 
-            std::scoped_lock<std::mutex> lk(mtx);
-			queue.clear();
-        }*/
 
         T pop(){
             std::scoped_lock<std::mutex> lock(mtx);

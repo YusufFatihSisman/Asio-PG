@@ -37,12 +37,11 @@ class server_interface{
 
         }
 
-        void update(uint16_t amount = -1){
+        void Update(uint16_t amount = -1){
             messageQueue.wait();
             uint16_t i = 0;
             while(!messageQueue.empty() && i < amount){
                 ClientMessage<T> msg = messageQueue.pop();
-                //Handle Message
                 HandleMessage(msg.client, msg.message);
                 i++;
             }
@@ -70,22 +69,22 @@ class server_interface{
             }
         }
 
-        void SendAll(const Message<T>& msg){
+        void SendAll(const Message<T>& msg, std::shared_ptr<connection<T>> exception = nullptr){
             std::vector<std::shared_ptr<connection<T>>>::iterator it;
  
             it = connections.begin();
-            //myvector.erase(it);
-        
-            // Printing the Vector
+
             for (auto it = connections.begin(); it != connections.end(); it++){
                 if(*it && (*it)->IsConnected()){
-                    (*it)->Send(msg);
+                    if(*it != exception)
+                        (*it)->Send(msg);
                 }else{
                     OnClientDisconnect(*it);
 
                     (*it).reset();
 
                     connections.erase(it);
+                    std::cout << connections.size() << "\n";
                     it--;
                 }
             }
